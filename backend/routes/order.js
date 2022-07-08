@@ -8,16 +8,43 @@ router.get("/", (req,res)=>{
     res.render("../../frontend/order/index.html")
 })
 
-const uri = "mongodb+srv://blaze:Omshanti%402005@cluster0.hwwyw.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+router.get("/view", (req,res)=>{
+  res.render("../../frontend/order/view-order.html")
+})
+
+async function InsertOrder(name, number, date, fromaddr, toaddr) {
+    try {
+         await client.connect();
+         console.log("Connected correctly to server");
+         const db = client.db(dbName);         
+         const col = db.collection("test");
+         // Construct a document                                                                                                                                                              
+         let personDocument = {
+             "name": name,
+             "date": date,
+             "number": number,
+             "from-addr": fromaddr,
+             "toaddr": toaddr
+         }
+         // Insert a single document, wait for promise so we can read it back
+        //  const p = await col.insertOne(personDocument);
+         const q = await col.deleteOne(personDocument);
+         // Find one document
+         const myDoc = await col.findOne();
+         // Print to the console
+         console.log(myDoc);
+        } catch (err) {
+         console.log(err.stack);
+     }
+ 
+     finally {
+        await client.close();
+    }
+}
 
 router.post('/', urlencodedParser, (req, res) => {
-    console.log('Got body:', req.body);
-    console.log('Name:', req.body.name);
-    console.log('Number:', req.body.number);
-    console.log('Address:', req.body.address);
-    res.send(" Name: " +  req.body.name +  " Number: " +  req.body.number + " Address: "  + req.body.address)    
-    InsertOrder(req.body.name, req.body.number, req.body.address)
+    console.log('Got body:', req.body);        
+    InsertOrder(req.body.name, req.body.number, req.body.date,  req.body.fromaddr, req.body.toaddr)    
 });
 
 module.exports = router
