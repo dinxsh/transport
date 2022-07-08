@@ -21,6 +21,10 @@ router.get("/service", (req,res)=>{
     res.render("../../frontend/service.html")
 })
 
+router.get("/register", (req,res)=>{
+    res.render("../../frontend/register.html")
+})
+
 router.get("/blog", (req,res)=>{
     res.render("../../frontend/blog.html")
 })
